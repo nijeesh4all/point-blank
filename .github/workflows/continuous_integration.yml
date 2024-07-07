@@ -17,7 +17,7 @@ jobs:
       - name: Update Bundler
         run: |
           gem install bundler --user-install
-          echo "::add-path::$HOME/.gem/ruby/$(ruby -e 'print RUBY_VERSION')/bin"
+          echo "$HOME/.gem/ruby/$(ruby -e 'print RUBY_VERSION')/bin" >> $GITHUB_PATH
 
       - name: Install dependencies
         run: bundle install
@@ -37,7 +37,7 @@ jobs:
       - name: Update Bundler
         run: |
           gem install bundler --user-install
-          echo "::add-path::$HOME/.gem/ruby/$(ruby -e 'print RUBY_VERSION')/bin"
+          echo "$HOME/.gem/ruby/$(ruby -e 'print RUBY_VERSION')/bin" >> $GITHUB_PATH
 
       - name: Install dependencies
         run: bundle install
@@ -66,7 +66,7 @@ jobs:
       - name: Update Bundler
         run: |
           gem install bundler --user-install
-          echo "::add-path::$HOME/.gem/ruby/$(ruby -e 'print RUBY_VERSION')/bin"
+          echo "$HOME/.gem/ruby/$(ruby -e 'print RUBY_VERSION')/bin" >> $GITHUB_PATH
 
       - name: Install dependencies
         run: bundle install
