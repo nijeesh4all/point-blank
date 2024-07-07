@@ -321,7 +321,7 @@ DEPENDENCIES
   brakeman
   capybara
   debug
-  error_highlight (~> 0.6.0)
+  error_highlight (= 0.6.0)
   factory_bot_rails
   faker
   importmap-rails
