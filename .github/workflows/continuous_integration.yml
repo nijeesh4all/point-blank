@@ -42,7 +42,7 @@ jobs:
       run: gem install bundler -v 2.5.7
       
     - name: Update ruby gems
-      run: gem update --system
+      run: gem update --system 3.3.26
 
     - name: Install dependencies
       run: bundle install
