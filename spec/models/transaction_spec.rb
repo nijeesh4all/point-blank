@@ -12,6 +12,6 @@ RSpec.describe Transaction, type: :model do
 
   it {
     should define_enum_for(:state).with_values(pending: 0, committed: 1, rejected: 2)
-                                   .backed_by_column_of_type(:integer).with_prefix
+                                  .backed_by_column_of_type(:integer).with_prefix
   }
 end
