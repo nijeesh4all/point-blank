@@ -14,10 +14,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Update Bundler
-        run: |
-          gem install bundler --user-install
-          echo "$HOME/.gem/ruby/$(ruby -e 'print RUBY_VERSION')/bin" >> $GITHUB_PATH
+      - name: Install Bundler
+        run: gem install bundler --user-install
+
+      - name: Set up Bundler path
+        run: echo "$HOME/.gem/ruby/$(ruby -e 'print RUBY_VERSION')/bin" >> $GITHUB_PATH
 
       - name: Install dependencies
         run: bundle install
@@ -34,10 +35,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Update Bundler
-        run: |
-          gem install bundler --user-install
-          echo "$HOME/.gem/ruby/$(ruby -e 'print RUBY_VERSION')/bin" >> $GITHUB_PATH
+      - name: Install Bundler
+        run: gem install bundler --user-install
+
+      - name: Set up Bundler path
+        run: echo "$HOME/.gem/ruby/$(ruby -e 'print RUBY_VERSION')/bin" >> $GITHUB_PATH
 
       - name: Install dependencies
         run: bundle install
@@ -63,10 +65,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Update Bundler
-        run: |
-          gem install bundler --user-install
-          echo "$HOME/.gem/ruby/$(ruby -e 'print RUBY_VERSION')/bin" >> $GITHUB_PATH
+      - name: Install Bundler
+        run: gem install bundler --user-install
+
+      - name: Set up Bundler path
+        run: echo "$HOME/.gem/ruby/$(ruby -e 'print RUBY_VERSION')/bin" >> $GITHUB_PATH
 
       - name: Install dependencies
         run: bundle install
