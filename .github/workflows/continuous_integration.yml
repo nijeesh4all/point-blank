@@ -46,6 +46,12 @@ jobs:
 
     - name: Install dependencies
       run: bundle install
+      
+    - name: versions
+      run: |
+        echo $(ruby -v)
+        echo $(bundler -v)
+        echo $(gem --version)
 
     - name: Set up database
       run: |
