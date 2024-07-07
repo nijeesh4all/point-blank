@@ -1,63 +1,65 @@
-name: Validate Project
+name: CI
 
 on:
   push:
-    branches-ignore:
-      - main
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  ci_validation:
+  scan:
     runs-on: ubuntu-latest
-    env:
-      RAILS_ENV: test
-
-    services:
-      postgres:
-        image: postgres:alpine
-        ports:
-          - 5432:5432
-        env:
-          POSTGRES_DB: postgres
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-        # needed because the postgres container does not provide a healthcheck
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Setup Ruby
+      - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.1.3
+          ruby-version: .ruby-version
           bundler-cache: true
-          cache-version: 1
 
-      - name: Test
-        run: bundle exec rspec
-      
-      - name: Upload Coverage
-        uses: actions/upload-artifact@v3
+      - name: Scan for security vulnerabilities
+        run: bin/brakeman
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
         with:
-          name: coverage
-          path: coverage
-      
-      - name: Lint
-        run: bundle exec rubocop
-      
-      - name: Validate Coverage
-        run: |
-          covered_percent=$(cat coverage/coverage.json | jq -r '.metrics.covered_percent');
-          re='^[+-]?[0-9]+([.||,][0-9]+)?$';
-          if ! [[ $covered_percent =~ $re ]]; then 
-            echo "WARNING :: Couldn't get coverage from artifact.";
-            exit 0
-          fi
-          required_coverage=${{env.MINIMUM_COVERAGE}};
-          if [ $covered_percent -le $required_coverage ]; then
-            echo "Coverage ($covered_percent%) is below the required threshold of $required_coverage%.";
-            exit 1
-          else
-            echo "Coverage ($covered_percent%) passed the required threshold of $required_coverage%."
-          fi
+          ruby-version: .ruby-version
+          bundler-cache: true
+
+      - name: Lint code for consistent style
+        run: bin/rubocop
+
+  test:
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+        options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
+    steps:
+      - name: Install packages
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libsqlite3-0 libvips curl ffmpeg
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        env:
+          REDIS_URL: redis://localhost:6379/0
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+
+      - name: Run Tests
+        run: bin/rails test:all
