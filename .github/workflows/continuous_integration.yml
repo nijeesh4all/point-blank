@@ -14,6 +14,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Update Bundler
+        run: gem update bundler
+
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -28,6 +31,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Update Bundler
+        run: gem update bundler
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
@@ -52,6 +58,9 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Update Bundler
+        run: gem update bundler
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
