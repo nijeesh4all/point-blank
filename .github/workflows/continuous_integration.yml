@@ -46,7 +46,7 @@ jobs:
           bundler-cache: true
 
       - name: Lint code for consistent style
-        run: bin/rubocop
+        run: bundle exec rubocop
 
   test:
     runs-on: ubuntu-latest
@@ -77,4 +77,4 @@ jobs:
           bundler-cache: true
 
       - name: Run Tests
-        run: bin/rails test:all
+        run: bundle exec test:all
