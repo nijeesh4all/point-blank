@@ -2,88 +2,64 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
-  scan:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Install Bundler
-        run: gem install bundler --user-install
-
-      - name: Set up Bundler path
-        run: echo "$HOME/.gem/ruby/$(ruby -e 'print RUBY_VERSION')/bin" >> $GITHUB_PATH
-
-      - name: Install dependencies
-        run: bundle install
-
-      - name: Uninstall conflicting error_highlight version
-        run: gem uninstall error_highlight -v 0.3.0
-
-      - name: Scan for security vulnerabilities
-        run: bundle exec brakeman
-
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Install Bundler
-        run: gem install bundler --user-install
-
-      - name: Set up Bundler path
-        run: echo "$HOME/.gem/ruby/$(ruby -e 'print RUBY_VERSION')/bin" >> $GITHUB_PATH
-
-      - name: Install dependencies
-        run: bundle install
-
-      - name: Uninstall conflicting error_highlight version
-        run: gem uninstall error_highlight -v 0.3.0
-
-      - name: Lint code for consistent style
-        run: bundle exec rubocop
-
   test:
     runs-on: ubuntu-latest
+
     services:
-      redis:
-        image: redis
+      postgres:
+        image: postgres:latest
         ports:
-          - 6379:6379
-        options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
-    steps:
-      - name: Install packages
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libsqlite3-0 libvips curl ffmpeg
-
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Install Bundler
-        run: gem install bundler --user-install
-
-      - name: Set up Bundler path
-        run: echo "$HOME/.gem/ruby/$(ruby -e 'print RUBY_VERSION')/bin" >> $GITHUB_PATH
-
-      - name: Install dependencies
-        run: bundle install
-
-      - name: Uninstall conflicting error_highlight version
-        run: gem uninstall error_highlight -v 0.3.0
-
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
+          - 5432:5432
         env:
-          REDIS_URL: redis://localhost:6379/0
-        with:
-          ruby-version: .ruby-version
-          bundler-cache: true
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: myapp_test
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
-      - name: Run Tests
-        run: bundle exec rspec
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.0'
+        bundler-cache: true
+
+    - name: Install dependencies
+      run: bundle install
+
+    - name: Set up database
+      run: |
+        cp config/database.yml.ci config/database.yml
+        bundle exec rails db:create
+        bundle exec rails db:schema:load
+
+    - name: Run RSpec tests
+      run: bundle exec rspec
+
+    - name: Run Brakeman
+      run: bundle exec brakeman --format html --output brakeman.html
+
+    - name: Upload Brakeman report
+      uses: actions/upload-artifact@v2
+      with:
+        name: brakeman-report
+        path: brakeman.html
+
+    - name: Run Bundle Audit
+      run: bundle exec bundle-audit check --update
+
+    - name: Run Rubocop
+      run: bundle exec rubocop
