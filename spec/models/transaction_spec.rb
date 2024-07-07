@@ -8,7 +8,7 @@ RSpec.describe Transaction, type: :model do
   it { should validate_presence_of(:transaction_id) }
   it { should validate_presence_of(:points) }
   it { should validate_presence_of(:user_id) }
-  it { should validate_presence_of(:status) }
+  it { should validate_presence_of(:state) }
 
   it {
     should define_enum_for(:state).with_values(pending: 0, committed: 1, rejected: 2)
