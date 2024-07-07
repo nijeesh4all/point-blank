@@ -6,5 +6,8 @@ class Api::V1::TransactionsController < Api::ApiControllerBase
   end
 
   def bulk
+    creation_service = TransactionsCreationService.new(params)
+    http_status, response = creation_service.call
+    render json: response, status: http_status
   end
 end
