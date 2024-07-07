@@ -17,16 +17,16 @@ jobs:
       - name: Update Bundler
         run: |
           gem install bundler --user-install
-          export PATH="$HOME/.gem/ruby/$(ruby -e 'print RUBY_VERSION')/bin:$PATH"
+          echo "::add-path::$HOME/.gem/ruby/$(ruby -e 'print RUBY_VERSION')/bin"
 
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: .ruby-version
-          bundler-cache: true
+      - name: Install dependencies
+        run: bundle install
+
+      - name: Uninstall conflicting error_highlight version
+        run: gem uninstall error_highlight -v 0.3.0
 
       - name: Scan for security vulnerabilities
-        run: bundle exec brakeman -z
+        run: bundle exec brakeman
 
   lint:
     runs-on: ubuntu-latest
@@ -37,13 +37,13 @@ jobs:
       - name: Update Bundler
         run: |
           gem install bundler --user-install
-          export PATH="$HOME/.gem/ruby/$(ruby -e 'print RUBY_VERSION')/bin:$PATH"
+          echo "::add-path::$HOME/.gem/ruby/$(ruby -e 'print RUBY_VERSION')/bin"
 
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: .ruby-version
-          bundler-cache: true
+      - name: Install dependencies
+        run: bundle install
+
+      - name: Uninstall conflicting error_highlight version
+        run: gem uninstall error_highlight -v 0.3.0
 
       - name: Lint code for consistent style
         run: bundle exec rubocop
@@ -66,7 +66,13 @@ jobs:
       - name: Update Bundler
         run: |
           gem install bundler --user-install
-          export PATH="$HOME/.gem/ruby/$(ruby -e 'print RUBY_VERSION')/bin:$PATH"
+          echo "::add-path::$HOME/.gem/ruby/$(ruby -e 'print RUBY_VERSION')/bin"
+
+      - name: Install dependencies
+        run: bundle install
+
+      - name: Uninstall conflicting error_highlight version
+        run: gem uninstall error_highlight -v 0.3.0
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
@@ -77,4 +83,4 @@ jobs:
           bundler-cache: true
 
       - name: Run Tests
-        run: bundle exec test:all
+        run: bundle exec rspec
