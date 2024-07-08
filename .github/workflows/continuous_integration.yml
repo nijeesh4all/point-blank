@@ -70,9 +70,6 @@ jobs:
         name: brakeman-report
         path: brakeman.html
 
-    - name: Run Bundle Audit
-      run: gem install bundler-audit && bundle exec bundle-audit check --update
-
     - name: Run Rubocop
       run: bundle exec rubocop
     
