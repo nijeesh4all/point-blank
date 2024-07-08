@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class TransactionCreationService
   attr_reader :params, :http_status, :response
 

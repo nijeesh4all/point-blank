@@ -1,2 +1,8 @@
-module Api::V1::TransactionsHelper
+# frozen_string_literal: true
+
+module Api
+  module V1
+    module TransactionsHelper
+    end
+  end
 end
