@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe TransactionCreationService do
@@ -6,7 +8,6 @@ RSpec.describe TransactionCreationService do
 
   let(:service) { TransactionCreationService.new(valid_params) }
   describe '#initialize' do
-
     it 'initializes with params' do
       expect(service.params).to eq(valid_params)
     end
