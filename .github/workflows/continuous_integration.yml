@@ -62,7 +62,7 @@ jobs:
       run: bundle exec rspec
 
     - name: Run Brakeman
-      run: gem install bundler-audit && bundle exec brakeman --format html --output brakeman.html
+      run: bundle exec brakeman --format html --output brakeman.html
 
     - name: Upload Brakeman report
       uses: actions/upload-artifact@v2
@@ -71,7 +71,10 @@ jobs:
         path: brakeman.html
 
     - name: Run Bundle Audit
-      run: bundle exec bundle-audit check --update
+      run: gem install bundler-audit && bundle exec bundle-audit check --update
 
     - name: Run Rubocop
       run: bundle exec rubocop
+    
+    - name: Run Rspecs
+      run: bundle exec rspec
