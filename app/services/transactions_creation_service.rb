@@ -7,24 +7,31 @@ class TransactionsCreationService
 
   def initialize(params)
     @params = params
-
-    @http_status = nil
-    @response = nil
   end
 
   def call
     transactions = transactions_params.map(&:to_h)
     import_result = Transaction.import(transactions, batch_size: BATCH_SIZE, on_duplicate_key_ignore: true)
+    process_transactions(import_result.ids)
     response_attrs(import_result)
   end
 
   private
 
+  def process_transactions(transaction_ids)
+    return if transaction_ids.empty?
+
+    ProcessTransactionsJob.perform_later(transaction_ids)
+  end
+
   def response_attrs(import_result)
     if import_result.ids.count.zero?
+      errors = import_result.failed_instances
+                            .map { |transaction| [transaction.transaction_id, transaction.errors.full_messages] }
+                            .to_h
+
       [
-        :unprocessable_entity,
-        { status: 'failed', errors: import_result.failed_instances.map(&:errors) }
+        :unprocessable_entity, { status: 'failed', errors: }
       ]
     else
       [:created, { status: 'success', processed_count: import_result.ids.count }]
