@@ -47,6 +47,8 @@ gem 'bootsnap', require: false
 
 gem 'sidekiq', '~> 7.3'
 gem 'redis-client', '~> 0.22.2'
+gem "sidekiq-unique-jobs", "~> 8.0"
+
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
