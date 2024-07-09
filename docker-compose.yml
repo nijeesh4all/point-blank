@@ -12,6 +12,7 @@ services:
       - db
     environment:
       DATABASE_URL: postgres://postgres:password@db:5432/point_blank
+      REDIS_URL: redis://redis:6379/0
     volumes:
       - .:/rails
     command: bundle exec rails s -b 0.0.0.0
@@ -24,6 +25,9 @@ services:
       POSTGRES_DB: point_blank
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis
 
 volumes:
   postgres_data:
