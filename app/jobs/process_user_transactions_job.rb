@@ -1,7 +1,7 @@
 class ProcessUserTransactionsJob < ApplicationJob
   queue_as :default
 
-  sidekiq_options retry: 5, lock: :until_executed, on_conflict: :replace
+  sidekiq_options retry: 5, on_conflict: :replace
 
   def perform(user_id)
     pending_transactions = Transaction.state_pending.where(user_id: user_id)
