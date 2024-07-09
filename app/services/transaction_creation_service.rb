@@ -1,28 +1,28 @@
 # frozen_string_literal: true
 
 class TransactionCreationService
-  attr_reader :params, :http_status, :response
+  attr_reader :params
 
   def initialize(params)
     @params = params
-    @http_status = nil
-    @response = nil
   end
 
   def create!
     transaction = Transaction.new(transaction_params)
     if transaction.save
-      @http_status = :created
-      @response = { status: 'success', transaction_id: transaction.id }
-    else
-      @http_status = :unprocessable_entity
-      @response = { status: 'failed', errors: transaction.errors.full_messages }
-    end
+      process_transaction(transaction)
 
-    [http_status, response]
+      [:created, { status: 'success', transaction_id: transaction.id }]
+    else
+      [:unprocessable_entity, { status: 'failed', errors: transaction.errors.full_messages }]
+    end
   end
 
   private
+
+  def process_transaction(transaction)
+    ProcessUserTransactionsJob.perform_later(transaction.user_id)
+  end
 
   def transaction_params
     params.permit(:transaction_id, :points, :user_id)

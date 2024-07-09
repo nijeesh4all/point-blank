@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 
+# rubocop:disable Metrics/BlockLength
 RSpec.describe TransactionsCreationService, type: :service do
   let(:user) { create(:user) }
 
@@ -36,59 +37,88 @@ RSpec.describe TransactionsCreationService, type: :service do
 
   describe '#call' do
     context 'with valid params' do
-      it 'creates transactions successfully' do
-        service = TransactionsCreationService.new(valid_params)
-        status, response = service.call
+      before do
+        @service = TransactionsCreationService.new(valid_params)
+        @status, @response = @service.call
+      end
 
-        expect(status).to eq(:created)
-        expect(response[:status]).to eq('success')
-        expect(response[:processed_count]).to eq(2)
+      it 'returns created status' do
+        expect(@status).to eq(:created)
+      end
+
+      it 'returns success status in response' do
+        expect(@response[:status]).to eq('success')
+      end
+
+      it 'returns correct processed count in response' do
+        expect(@response[:processed_count]).to eq(2)
       end
     end
 
     context 'with mixed params' do
-      it 'creates only valid transactions' do
-        service = TransactionsCreationService.new(mixed_params)
-        status, response = service.call
+      before do
+        @service = TransactionsCreationService.new(mixed_params)
+        @status, @response = @service.call
+      end
 
-        expect(status).to eq(:created)
-        expect(response[:status]).to eq('success')
-        expect(response[:processed_count]).to eq(2)
+      it 'returns created status' do
+        expect(@status).to eq(:created)
+      end
+
+      it 'returns success status in response' do
+        expect(@response[:status]).to eq('success')
+      end
+
+      it 'returns correct processed count in response' do
+        expect(@response[:processed_count]).to eq(2)
       end
     end
 
     context 'with invalid params' do
-      it 'fails to create transactions' do
-        service = TransactionsCreationService.new(invalid_params)
-        status, response = service.call
+      before do
+        @service = TransactionsCreationService.new(invalid_params)
+        @status, @response = @service.call
+      end
 
-        expect(status).to eq(:unprocessable_entity)
-        expect(response[:status]).to eq('failed')
-        expect(response[:errors].count).to eq(3)
+      it 'returns unprocessable_entity status' do
+        expect(@status).to eq(:unprocessable_entity)
+      end
+
+      it 'returns failed status in response' do
+        expect(@response[:status]).to eq('failed')
+      end
+
+      it 'returns correct error count in response' do
+        expect(@response[:errors].count).to eq(3)
       end
     end
 
     context 'with duplicate transaction_id' do
-      it 'ignores the duplicate transaction_id' do
+      before do
         transaction_id = SecureRandom.uuid
+        params = ActionController::Parameters.new({
+                                                    transactions: [
+                                                      { transaction_id:, points: 100, user_id: user.id },
+                                                      { transaction_id:, points: 200, user_id: user.id },
+                                                      { transaction_id: 'random_id', points: 200, user_id: user.id }
+                                                    ]
+                                                  })
+        @service = TransactionsCreationService.new(params)
+        @status, @response = @service.call
+      end
 
-        service = TransactionsCreationService.new(ActionController::Parameters.new({
-                                                                                     transactions: [
-                                                                                       { transaction_id:, points: 100,
-                                                                                         user_id: user.id },
-                                                                                       { transaction_id:, points: 200,
-                                                                                         user_id: user.id },
-                                                                                       { transaction_id: 'random_id',
-                                                                                         points: 200, user_id: user.id }
-                                                                                     ]
-                                                                                   }))
+      it 'returns created status' do
+        expect(@status).to eq(:created)
+      end
 
-        status, response = service.call
+      it 'returns success status in response' do
+        expect(@response[:status]).to eq('success')
+      end
 
-        expect(status).to eq(:created)
-        expect(response[:status]).to eq('success')
-        expect(response[:processed_count]).to eq(2)
+      it 'returns correct processed count in response' do
+        expect(@response[:processed_count]).to eq(2)
       end
     end
   end
 end
+# rubocop:enable Metrics/BlockLength
