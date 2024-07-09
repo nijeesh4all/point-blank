@@ -2,8 +2,6 @@
 
 databases:
   - name: postgres
-    databaseName: point-blank
-    user: point-blank
 
 services:
   - type: web
