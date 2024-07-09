@@ -10,7 +10,7 @@ require 'rspec/rails'
 
 require_relative 'support/factory_bot'
 require_relative 'support/shoulda_matchers'
-require_relative 'support/sidekiq.rb'
+require_relative 'support/sidekiq'
 
 # Add additional requires below this line. Rails is not loaded until this point!
 

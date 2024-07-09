@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'sidekiq/web'
 
 Rails.application.routes.draw do
@@ -8,11 +9,13 @@ Rails.application.routes.draw do
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get 'up' => 'rails/health#show', as: :rails_health_check
 
-  Sidekiq::Web.use Rack::Auth::Basic do |username, password|
-    ActiveSupport::SecurityUtils.secure_compare(::Digest::SHA256.hexdigest(username), ::Digest::SHA256.hexdigest(ENV["SIDEKIQ_USERNAME"])) &
-      ActiveSupport::SecurityUtils.secure_compare(::Digest::SHA256.hexdigest(password), ::Digest::SHA256.hexdigest(ENV["SIDEKIQ_PASSWORD"]))
-  end if Rails.env.production?
-  mount Sidekiq::Web, at: "/sidekiq"
+  if Rails.env.production?
+    Sidekiq::Web.use Rack::Auth::Basic do |username, password|
+      ActiveSupport::SecurityUtils.secure_compare(::Digest::SHA256.hexdigest(username), ::Digest::SHA256.hexdigest(ENV['SIDEKIQ_USERNAME'])) &
+        ActiveSupport::SecurityUtils.secure_compare(::Digest::SHA256.hexdigest(password), ::Digest::SHA256.hexdigest(ENV['SIDEKIQ_PASSWORD']))
+    end
+  end
+  mount Sidekiq::Web, at: '/sidekiq'
 
   namespace :api do
     namespace :v1 do

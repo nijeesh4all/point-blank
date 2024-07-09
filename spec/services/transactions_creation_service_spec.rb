@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 
+# rubocop:disable Metrics/BlockLength
 RSpec.describe TransactionsCreationService, type: :service do
   let(:user) { create(:user) }
 
@@ -120,3 +121,4 @@ RSpec.describe TransactionsCreationService, type: :service do
     end
   end
 end
+# rubocop:enable Metrics/BlockLength

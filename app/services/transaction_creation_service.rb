@@ -12,15 +12,9 @@ class TransactionCreationService
     if transaction.save
       process_transaction(transaction)
 
-      [
-        :created,
-        { status: 'success', transaction_id: transaction.id }
-      ]
+      [:created, { status: 'success', transaction_id: transaction.id }]
     else
-      [
-        :unprocessable_entity,
-        { status: 'failed', errors: transaction.errors.full_messages }
-      ]
+      [:unprocessable_entity, { status: 'failed', errors: transaction.errors.full_messages }]
     end
   end
 
