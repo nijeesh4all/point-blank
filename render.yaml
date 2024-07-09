@@ -37,8 +37,7 @@ services:
     region: ohio
     maxmemoryPolicy: noeviction
     plan: free
-    ipAllowList:
-      - 0.0.0.0/0
+    ipAllowList: []
 
   - type: worker
     plan: free
