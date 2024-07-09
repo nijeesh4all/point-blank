@@ -1,9 +1,7 @@
 # Exported from Render on 2024-07-09T08:24:43Z
 
-services:
-  databases:
+databases:
   - name: postgres
-    ipAllowList: []
     databaseName: point-blank
     user: point-blank
 
