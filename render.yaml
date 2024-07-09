@@ -1,9 +1,9 @@
 # Exported from Render on 2024-07-09T08:24:43Z
 
 databases:
-  - name: postgres
-    databaseName: point-blank
-    user: point-blank
+  - name: point-blank
+    plan: free
+    region: oregon
 
 services:
   - type: web
