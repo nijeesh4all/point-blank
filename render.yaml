@@ -1,0 +1,32 @@
+# Exported from Render on 2024-07-09T08:24:43Z
+
+services:
+  databases:
+  - name: postgres
+    ipAllowList: []
+    databaseName: point-blank
+    user: point-blank
+
+- type: web
+  name: point-blank
+  runtime: docker
+  repo: https://github.com/nijeesh4all/point-blank
+  plan: free
+  
+  envVars:
+  - key: RAILS_MASTER_KEY
+    sync: false
+  - key: WEB_CONCURRENCY
+    sync: false
+  - key: DATABASE_URL
+    fromDatabase:
+      name: postgres
+      property: connectionString
+  
+  region: oregon
+  dockerContext: .
+  dockerfilePath: ./Dockerfile
+  autoDeploy: false
+
+
+version: "1"
