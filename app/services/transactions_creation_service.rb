@@ -12,10 +12,17 @@ class TransactionsCreationService
   def call
     transactions = transactions_params.map(&:to_h)
     import_result = Transaction.import(transactions, batch_size: BATCH_SIZE, on_duplicate_key_ignore: true)
+    process_transactions(import_result.ids)
     response_attrs(import_result)
   end
 
   private
+
+  def process_transactions(transaction_ids)
+    return if transaction_ids.empty?
+    
+    ProcessTransactionsJob.perform_later(transaction_ids)
+  end
 
   def response_attrs(import_result)
     if import_result.ids.count.zero?
