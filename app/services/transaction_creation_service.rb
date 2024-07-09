@@ -5,21 +5,21 @@ class TransactionCreationService
 
   def initialize(params)
     @params = params
-    @http_status = nil
-    @response = nil
   end
 
   def create!
     transaction = Transaction.new(transaction_params)
     if transaction.save
-      @http_status = :created
-      @response = { status: 'success', transaction_id: transaction.id }
+      [
+        :created,
+        { status: 'success', transaction_id: transaction.id }
+      ]
     else
-      @http_status = :unprocessable_entity
-      @response = { status: 'failed', errors: transaction.errors.full_messages }
+      [
+        :unprocessable_entity,
+        { status: 'failed', errors: transaction.errors.full_messages }
+      ]
     end
-
-    [http_status, response]
   end
 
   private
