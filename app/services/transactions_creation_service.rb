@@ -7,9 +7,6 @@ class TransactionsCreationService
 
   def initialize(params)
     @params = params
-
-    @http_status = nil
-    @response = nil
   end
 
   def call
@@ -22,9 +19,12 @@ class TransactionsCreationService
 
   def response_attrs(import_result)
     if import_result.ids.count.zero?
+      errors = import_result.failed_instances
+                            .map { |transaction| [transaction.transaction_id, transaction.errors.full_messages] }
+                            .to_h
+
       [
-        :unprocessable_entity,
-        { status: 'failed', errors: import_result.failed_instances.map(&:errors) }
+        :unprocessable_entity, { status: 'failed', errors: }
       ]
     else
       [:created, { status: 'success', processed_count: import_result.ids.count }]
