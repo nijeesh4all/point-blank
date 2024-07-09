@@ -1,2 +1,2 @@
-web: bin/rails server
-css: bin/rails tailwindcss:watch
+web: bin/rails server server -b 0.0.0.0
+sidekiq: bundle exec sidekiq
