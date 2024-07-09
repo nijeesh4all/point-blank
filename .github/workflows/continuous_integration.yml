@@ -9,9 +9,69 @@ on:
       - main
 
 jobs:
-  test:
+  setup:
     runs-on: ubuntu-latest
-    
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.1.3'
+
+    - name: Install dependencies
+      run: bundle install
+
+  linting:
+    runs-on: ubuntu-latest
+    needs: setup
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.1.3'
+
+    - name: Install dependencies
+      run: bundle install
+
+    - name: Run Rubocop
+      run: bundle exec rubocop --disable-pending-cops
+
+  sca:
+    runs-on: ubuntu-latest
+    needs: setup
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.1.3'
+
+    - name: Install dependencies
+      run: bundle install
+
+    - name: Run Brakeman
+      run: bundle exec brakeman --format html --output brakeman.html
+
+    - name: Upload Brakeman report
+      uses: actions/upload-artifact@v2
+      with:
+        name: brakeman-report
+        path: brakeman.html
+
+  tests:
+    runs-on: ubuntu-latest
+    needs: setup
+
     env:
       RAILS_ENV: test
 
@@ -33,10 +93,6 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-      
-    - name: List files
-      run: ls -la
-
 
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
@@ -45,12 +101,6 @@ jobs:
 
     - name: Install dependencies
       run: bundle install
-      
-    - name: versions
-      run: |
-        echo $(ruby -v)
-        echo $(bundler -v)
-        echo "Ruby Gems version $(gem --version)"
 
     - name: Set up database
       run: |
@@ -59,19 +109,4 @@ jobs:
         bundle exec rails db:schema:load
 
     - name: Run RSpec tests
-      run: bundle exec rspec
-
-    - name: Run Brakeman
-      run: bundle exec brakeman --format html --output brakeman.html
-
-    - name: Upload Brakeman report
-      uses: actions/upload-artifact@v2
-      with:
-        name: brakeman-report
-        path: brakeman.html
-
-    - name: Run Rubocop
-      run: bundle exec rubocop --disable-pending-cops
-    
-    - name: Run Rspecs
       run: bundle exec rspec
