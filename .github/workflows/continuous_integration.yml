@@ -51,10 +51,6 @@ jobs:
   tests:
     runs-on: ubuntu-latest
 
-    env:
-      RAILS_ENV: test
-      REDIS_URL: redis://localhost:6379/1
-
     services:
       postgres:
         image: postgres:latest
@@ -77,6 +73,12 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+        ports:
+          - 6379:6379
+          
+    env:
+      RAILS_ENV: test
+      REDIS_URL: redis://localhost:6379/1
 
     steps:
     - name: Checkout code
