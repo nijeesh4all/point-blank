@@ -20,7 +20,7 @@ class TransactionsCreationService
 
   def process_transactions(transaction_ids)
     return if transaction_ids.empty?
-    
+
     ProcessTransactionsJob.perform_later(transaction_ids)
   end
 

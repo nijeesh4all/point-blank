@@ -5,18 +5,18 @@ require 'rails_helper'
 RSpec.describe ProcessUserTransactionsJob, type: :job do
   let(:user) { create(:user, points: 0) }
   let!(:pending_transactions) do
-    create_list(:transaction, 2, user: user, state: 'pending', points: 50)
+    create_list(:transaction, 2, user:, state: 'pending', points: 50)
   end
   let!(:committed_transaction) do
-    create(:transaction, user: user, state: 'committed', points: 100)
+    create(:transaction, user:, state: 'committed', points: 100)
   end
 
   describe '#perform' do
     it 'processes pending transactions' do
-      expect {
+      expect do
         described_class.new.perform(user.id)
         user.reload
-      }.to change { user.points }.by(100)
+      end.to change { user.points }.by(100)
 
       pending_transactions.each do |transaction|
         expect(transaction.reload.state).to eq('committed')
@@ -33,9 +33,9 @@ RSpec.describe ProcessUserTransactionsJob, type: :job do
     it 'raises an error if user save fails' do
       allow_any_instance_of(User).to receive(:save!).and_raise(ActiveRecord::RecordInvalid)
 
-      expect {
+      expect do
         described_class.new.perform(user.id)
-      }.to raise_error(ActiveRecord::RecordInvalid)
+      end.to raise_error(ActiveRecord::RecordInvalid)
     end
   end
 
@@ -48,9 +48,9 @@ RSpec.describe ProcessUserTransactionsJob, type: :job do
       described_class.perform_later(user.id)
       described_class.perform_later(user.id)
 
-      expect {
+      expect do
         Sidekiq::Worker.drain_all
-      }.to change { user.reload.points }.by(100)
+      end.to change { user.reload.points }.by(100)
     end
   end
 end

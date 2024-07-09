@@ -32,7 +32,7 @@ RSpec.describe TransactionCreationService do
       end
 
       it 'calls ProcessUserTransactionsJob with correct user_id' do
-        expect(ProcessUserTransactionsJob).to receive(:perform_later).with("1")
+        expect(ProcessUserTransactionsJob).to receive(:perform_later).with('1')
         service.create!
       end
     end
