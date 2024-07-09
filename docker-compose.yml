@@ -10,9 +10,12 @@ services:
       - "3000:3000"
     depends_on:
       - db
+      - redis
     environment:
       DATABASE_URL: postgres://postgres:password@db:5432/point_blank
       REDIS_URL: redis://redis:6379/0
+      SIDEKIQ_PASSWORD: admin
+      SIDEKIQ_USERNAME: admin
     volumes:
       - .:/rails
     command: bundle exec rails s -b 0.0.0.0
@@ -28,6 +31,21 @@ services:
 
   redis:
     image: redis
+
+  sidekiq:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: point-blank:latest
+    volumes:
+      - .:/rails
+    command: bundle exec sidekiq
+    depends_on:
+      - db
+      - redis
+    environment:
+      DATABASE_URL: postgres://postgres:password@db:5432/point_blank
+      REDIS_URL: redis://redis:6379/0
 
 volumes:
   postgres_data:
