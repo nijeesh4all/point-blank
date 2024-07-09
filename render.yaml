@@ -5,7 +5,6 @@ databases:
     plan: free
 
 
-
 services:
   - type: web
     name: point-blank
@@ -38,9 +37,10 @@ services:
     region: ohio
     maxmemoryPolicy: noeviction
     plan: free
+    ipAllowList:
+      - 0.0.0.0/0
 
   - type: worker
-    startCommand: bundle exec sidekiq
     plan: free
     region: oregon
 
