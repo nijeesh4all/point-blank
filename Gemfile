@@ -45,9 +45,8 @@ gem 'tzinfo-data', platforms: %i[windows jruby]
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', require: false
 
-gem 'brakeman'
-
-gem 'rubocop', require: false
+gem 'sidekiq', '~> 7.3'
+gem 'redis-client', '~> 0.22.2'
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -56,6 +55,9 @@ group :development, :test do
   gem 'factory_bot_rails'
   gem 'faker'
   gem 'rspec-rails'
+
+  gem 'brakeman'
+  gem 'rubocop', require: false
 end
 
 group :development do
