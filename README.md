@@ -35,6 +35,7 @@ https://point-blank-o8n9.onrender.com
       - [Points Transaction Processing Application](#points-transaction-processing-application)
   - [Overview](#overview)
   - [Features](#features)
+  - [Architecture](#architecture)
   - [Table of Contents](#table-of-contents)
   - [Requirements](#requirements)
   - [Getting Started](#getting-started)
@@ -59,6 +60,16 @@ https://point-blank-o8n9.onrender.com
 
 ### Prerequisites
 - Ensure you have Docker and Docker Compose installed on your machine.
+
+### Environment Variables
+| Variable         | Purpose                                                         | Configuration Location                         |
+|------------------|-----------------------------------------------------------------|----------------------------------------|
+| `SIDEKIQ_USERNAME` | Username for accessing the Sidekiq Web UI                      | Configure in the Docker Compose file  |
+| `SIDEKIQ_PASSWORD` | Password for accessing the Sidekiq Web UI                      | Configure in the Docker Compose file  |
+| `HOST`             | The host address for the Rails server _( not needed in dev mostly)_          | Configure in the Docker Compose file  |
+| `REDIS_URL`        | URL for the Redis server, used for Sidekiq and caching         | Configure in the Docker Compose file  |
+
+
 
 ### Installation
 1. Clone the repository:
@@ -154,7 +165,3 @@ Contributions are welcome! Please open an issue or submit a pull request for any
 
 ## License
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
----
-
-**Note:** Ensure to replace `yourusername` in the clone URL with your actual GitHub username before using the commands.
